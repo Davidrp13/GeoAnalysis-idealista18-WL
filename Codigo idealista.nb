@@ -1,0 +1,2417 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='WolframDesktop 13.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       161,          7]
+NotebookDataLength[     90636,       2409]
+NotebookOptionsPosition[     74624,       2157]
+NotebookOutlinePosition[     75074,       2175]
+CellTagsIndexPosition[     75031,       2172]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Codebook idealista18", "Title",
+ CellChangeTimes->{{3.879523790835374*^9, 
+  3.879523794322938*^9}},ExpressionUUID->"95007a8a-78bd-44a0-8319-\
+bee77d60613d"],
+
+Cell["David Recio Pastor", "Subtitle",
+ CellChangeTimes->{{3.8795237994378347`*^9, 
+  3.879523804487691*^9}},ExpressionUUID->"dbda51d8-bb27-4526-8871-\
+be12e0a88927"],
+
+Cell[CellGroupData[{
+
+Cell["Preparaci\[OAcute]n de los datos", "Section",
+ CellChangeTimes->{{3.879522123906569*^9, 
+  3.8795221680848007`*^9}},ExpressionUUID->"38e84b7e-fd32-49e5-b2b2-\
+3bd85ee51f24"],
+
+Cell["Importo el CSV", "Text",
+ CellChangeTimes->{{3.879522830690238*^9, 
+  3.879522833559626*^9}},ExpressionUUID->"67372099-326b-4667-9a70-\
+f08a274ea35e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"raw", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+    "\"\</Users/davidrp/Archivo/idealista/es_home_sale_Valencia_2018.csv\>\"",
+      ",", "\"\<Table\>\"", ",", 
+     RowBox[{"\"\<FieldSeparators\>\"", "->", 
+      RowBox[{"{", "\"\<;\>\"", "}"}]}]}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.879525466218004*^9, 
+  3.87952546626746*^9}},ExpressionUUID->"4aa5b196-73b9-4ba9-9881-\
+ff261b55846e"],
+
+Cell["Creo el dataset", "Text",
+ CellChangeTimes->{{3.87952283741665*^9, 
+  3.8795228465632553`*^9}},ExpressionUUID->"c7d342ac-ae88-48ee-91eb-\
+7e78883fafb6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"idealistasetraw", "=", 
+   RowBox[{
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"AssociationThread", "[", 
+       RowBox[{
+        RowBox[{"raw", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "All"}], "]"}], "]"}], ",", 
+        RowBox[{"raw", "[", 
+         RowBox[{"[", 
+          RowBox[{"i", ",", "All"}], "]"}], "]"}]}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "2", ",", 
+        RowBox[{"Length", "[", "raw", "]"}]}], "}"}]}], "]"}], "//", 
+    "Dataset"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.879521902082335*^9, 3.879521904307729*^9}, {
+  3.8795221995353203`*^9, 3.879522211438592*^9}},
+ CellLabel->"In[17]:=",ExpressionUUID->"5f4ff4db-0b2d-4df3-948f-15b06bbae1d5"],
+
+Cell["Junto por ASSETID", "Text",
+ CellChangeTimes->{{3.8795228648669577`*^9, 3.8795228737535963`*^9}, {
+  3.8795230185423117`*^9, 
+  3.879523018662871*^9}},ExpressionUUID->"c5e52005-d3d9-4377-acfe-\
+10988fb994d2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"idealistaset", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Merge", "[", 
+      RowBox[{"#", ",", "DeleteDuplicates"}], "]"}], "&"}], "/@", 
+    RowBox[{"Values", "[", 
+     RowBox[{"GroupBy", "[", 
+      RowBox[{"idealistasetraw", ",", 
+       RowBox[{"Key", "[", "\"\<ASSETID\>\"", "]"}]}], "]"}], "]"}]}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.879522217490601*^9, 3.879522254977852*^9}, {
+  3.879522564315516*^9, 3.879522576791086*^9}, {3.8795228555165873`*^9, 
+  3.8795228574600353`*^9}},ExpressionUUID->"837946b7-f387-419b-8290-\
+702bceb3b80b"],
+
+Cell["\<\
+Selecciono las conlumnas listadas que s\[OAcute]lo tengan una observaci\
+\[OAcute]n\
+\>", "Text",
+ CellChangeTimes->{{3.879522885642128*^9, 3.879522899191688*^9}, {
+  3.879523606128449*^9, 
+  3.879523606814631*^9}},ExpressionUUID->"9f92d3bb-8063-413a-b301-\
+ddd271feaf11"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"idealistaset", "=", 
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"Select", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"Length", "[", "#CONSTRUCTEDAREA", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#ROOMNUMBER", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#BATHNUMBER", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASTERRACE", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASLIFT", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASAIRCONDITIONING", "]"}], "==", "1"}], "&&",
+        "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#AMENITYID", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASPARKINGSPACE", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#ISPARKINGSPACEINCLUDEDINPRICE", "]"}], "==", 
+        "1"}], "&&", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASBOXROOM", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASWARDROBE", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASDOORMAN", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASGARDEN", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASSWIMMINGPOOL", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#ISDUPLEX", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#ISINTOPFLOOR", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#CONSTRUCTIONYEAR", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#FLOORCLEAN", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#FLATLOCATIONID", "]"}], "==", "1"}], "&&", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#PARKINGSPACEPRICE", "]"}], "==", "1"}], "&&",
+        "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASNORTHORIENTATION", "]"}], "==", "1"}], "&&",
+        "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASSOUTHORIENTATION", "]"}], "==", "1"}], "&&",
+        "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASEASTORIENTATION", "]"}], "==", "1"}], "&&",
+        "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Length", "[", "#HASWESTORIENTATION", "]"}], "==", "1"}]}], 
+      "&"}], "\[IndentingNewLine]", "]"}], "]"}]}], ";"}]], "Input",Expression\
+UUID->"5ef04fc2-c6dc-4812-88b9-41bc9f7ac7ee"],
+
+Cell["\<\
+Me quedo con el minimo del precio y precio por metro cuadrado y con la media \
+de las coordenadas y distancias.\
+\>", "Text",
+ CellChangeTimes->{{3.87952291098138*^9, 3.879522950700864*^9}, {
+  3.879523750583946*^9, 
+  3.879523750672202*^9}},ExpressionUUID->"d69bc233-339e-47af-b7eb-\
+ce1a28cac366"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"idealistaset", " ", "=", 
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"All", ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"\"\<PRICE\>\"", "->", "Min"}], ",", 
+       RowBox[{"\"\<UNITPRICE\>\"", "->", "Min"}], ",", 
+       RowBox[{"\"\<DISTANCE_TO_CITY_CENTER\>\"", "->", "Mean"}], ",", 
+       RowBox[{"\"\<DISTANCE_TO_METRO\>\"", "->", "Mean"}], ",", 
+       RowBox[{"\"\<DISTANCE_TO_BLASCO\>\"", "->", "Mean"}], ",", 
+       RowBox[{"\"\<LONGITUDE\>\"", "->", "Mean"}], ",", 
+       RowBox[{"\"\<LATITUDE\>\"", "->", "Mean"}]}], "}"}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.879522588013794*^9, 3.879522595437397*^9}},
+ CellLabel->"In[26]:=",ExpressionUUID->"bedd96c8-e744-4f03-88da-19669996cb2a"],
+
+Cell["\<\
+Hago una funci\[OAcute]n auxiliar para aplicar una condici\[OAcute]n  y \
+quitar todas las listas del set, s\[OAcute]lo tener un elemento.\
+\>", "Text",
+ CellChangeTimes->{{3.879522960761736*^9, 
+  3.8795229969330997`*^9}},ExpressionUUID->"771f8753-cbbf-4a78-a48b-\
+f54e11313cb1"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"takefirst", "[", "x_", "]"}], ":=", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Head", "[", "x", "]"}], "===", "List"}], ",", 
+     RowBox[{"First", "[", "x", "]"}], ",", "x"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.87952263268988*^9, 3.879522649491377*^9}},
+ CellLabel->"In[27]:=",ExpressionUUID->"422cb6ab-bd00-442a-b12a-54be9b34f293"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{
+   RowBox[{"idealistaset", " ", "=", " ", 
+    RowBox[{"idealistaset", "[", 
+     RowBox[{"All", ",", " ", "All", ",", " ", "takefirst"}], "]"}]}], ";"}], 
+  "Input"]], "Input",
+ CellChangeTimes->{{3.879522653126292*^9, 3.879522677055173*^9}, 
+   3.879523265216052*^9, {3.8795237136897907`*^9, 3.879523713693573*^9}},
+ CellLabel->"In[28]:=",ExpressionUUID->"f006d586-ed8b-43ce-9019-11edc5f7c337"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tablas y gr\[AAcute]ficos", "Section",
+ CellChangeTimes->{{3.879523082629098*^9, 
+  3.879523087484336*^9}},ExpressionUUID->"d0e354ac-9b7f-484a-a76c-\
+6a145151e92b"],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 1", "Subsubsection",
+ CellChangeTimes->{{3.879522075421938*^9, 
+  3.879522079636248*^9}},ExpressionUUID->"cf74aae8-8551-42a6-904d-\
+bf4596eac8aa"],
+
+Cell["\<\
+Agrupo por ID, cuanto cuantos elementos hay en cada ID, agrupo por los que \
+tienen el mismo n\[UAcute]mero de observaciones y ordeno de mayor a menor.\
+\>", "Text",
+ CellChangeTimes->{{3.879522422999875*^9, 3.8795224367575006`*^9}, {
+  3.879522470339221*^9, 
+  3.879522493502762*^9}},ExpressionUUID->"87fe5583-8343-4611-9fee-\
+e81ac5dea0c0"],
+
+Cell[BoxData[
+ RowBox[{"ReverseSort", "@", 
+  RowBox[{"Counts", "[", 
+   RowBox[{"Length", "/@", 
+    RowBox[{"idealistasetraw", "[", 
+     RowBox[{"GroupBy", "[", "\"\<ASSETID\>\"", "]"}], "]"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.879521907114998*^9, 3.879521945600676*^9}, {
+  3.879521978482526*^9, 3.879521989378113*^9}, {3.879522022277898*^9, 
+  3.8795220527038383`*^9}, {3.879522201457264*^9, 3.879522214392928*^9}},
+ CellLabel->"In[20]:=",ExpressionUUID->"ff97da46-111d-4937-b81f-b1e4d7adb698"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 2", "Subsubsection",
+ CellChangeTimes->{{3.879522265367165*^9, 
+  3.8795222667261667`*^9}},ExpressionUUID->"85b4b40d-bd63-49e6-9819-\
+5dd791f9acfe"],
+
+Cell["Selecciono el primer elemento del set como ejemplo", "Text",
+ CellChangeTimes->{{3.879522396421094*^9, 
+  3.879522412143786*^9}},ExpressionUUID->"854352a9-ead7-4350-a608-\
+106849c90431"],
+
+Cell[BoxData[
+ RowBox[{"idealistaset", "[", 
+  RowBox[{"[", 
+   RowBox[{"1", ",", "All"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879522375580104*^9, 3.879522382614305*^9}},
+ CellLabel->"In[22]:=",ExpressionUUID->"539dfd2a-f55e-4ce6-9748-7738055f0890"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 3", "Subsubsection",
+ CellChangeTimes->{{3.879522265367165*^9, 3.8795222667261667`*^9}, {
+  3.879522544609926*^9, 
+  3.879522545648634*^9}},ExpressionUUID->"24bc63de-d0bc-4185-b10e-\
+32d53c8d9203"],
+
+Cell["\<\
+Para las tablas de estad\[IAcute]sticas descriptivas cre\[EAcute] la \
+siguiente funci\[OAcute]n:\
+\>", "Text",
+ CellChangeTimes->{{3.8795227371481256`*^9, 
+  3.8795227591817102`*^9}},ExpressionUUID->"b7cc457a-d15a-48cf-9f4a-\
+d1dee084c81b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"summary", "[", "data_", "]"}], ":=", 
+  RowBox[{"Dataset", "@", 
+   RowBox[{"<|", 
+    RowBox[{
+     RowBox[{"\"\<M\[IAcute]nimo\>\"", "->", 
+      RowBox[{"Min", "[", "data", "]"}]}], ",", 
+     RowBox[{"\"\<1er Cuartil\>\"", "->", 
+      RowBox[{"Quantile", "[", 
+       RowBox[{"data", ",", "0.25"}], "]"}]}], ",", 
+     RowBox[{"\"\<Mediana\>\"", "->", 
+      RowBox[{"Median", "[", "data", "]"}]}], ",", 
+     RowBox[{"\"\<Media\>\"", "->", 
+      RowBox[{"Mean", "[", "data", "]"}]}], ",", 
+     RowBox[{"\"\<3er Cuantil\>\"", "->", 
+      RowBox[{"Quantile", "[", 
+       RowBox[{"data", ",", "0.75"}], "]"}]}], ",", 
+     RowBox[{"\"\<Top 5%\>\"", "->", 
+      RowBox[{"Quantile", "[", 
+       RowBox[{"data", ",", "0.95"}], "]"}]}], ",", 
+     RowBox[{"\"\<Top 1%\>\"", "->", 
+      RowBox[{"Quantile", "[", 
+       RowBox[{"data", ",", "0.99"}], "]"}]}], ",", 
+     RowBox[{"\"\<M\[AAcute]ximo\>\"", "->", 
+      RowBox[{"Max", "[", "data", "]"}]}], ",", 
+     RowBox[{"\"\<Std. Dev.\>\"", "->", 
+      RowBox[{"StandardDeviation", "[", "data", "]"}]}], ",", 
+     RowBox[{"\"\<Test de asimetr\[IAcute]a\>\"", "->", 
+      RowBox[{"N", "@", 
+       RowBox[{"Skewness", "[", 
+        RowBox[{"Normal", "[", "data", "]"}], "]"}]}]}], ",", 
+     RowBox[{"\"\<Kurtosis\>\"", "->", 
+      RowBox[{"N", "@", 
+       RowBox[{"Kurtosis", "[", 
+        RowBox[{"Normal", "[", "data", "]"}], "]"}]}]}]}], 
+    "|>"}]}]}]], "Input",
+ CellChangeTimes->{{3.879522758041637*^9, 3.8795227818530893`*^9}},
+ CellLabel->"In[30]:=",ExpressionUUID->"0a521c22-1a72-45e5-927c-1f6f54f87e6c"],
+
+Cell["La aplico sobre la columna precios", "Text",
+ CellChangeTimes->{{3.8795230391504707`*^9, 
+  3.879523046088307*^9}},ExpressionUUID->"94bd45ff-20ce-4d38-abfe-\
+6a34dd775301"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{"idealistaset", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<PRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879522790878633*^9, 3.879522812283252*^9}},
+ CellLabel->"In[31]:=",ExpressionUUID->"3db0735f-08d6-45aa-b3de-8ee4ae7b450b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Histograma 1", "Subsubsection",
+ CellChangeTimes->{{3.879523190916604*^9, 
+  3.879523194799938*^9}},ExpressionUUID->"64aff814-0deb-4e32-bd7a-\
+485283eaff7c"],
+
+Cell[BoxData[
+ RowBox[{"Histogram", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "\"\<PRICE\>\""}], "]"}], "]"}], ",", 
+   RowBox[{"PlotRange", "->", "All"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.879523203338605*^9, 3.8795232309553337`*^9}},
+ CellLabel->"In[33]:=",ExpressionUUID->"220f4cb3-98b7-4657-b38d-c534e425da40"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Diagrama de caja 1", "Subsubsection",
+ CellChangeTimes->{{3.879523270609495*^9, 
+  3.879523273887971*^9}},ExpressionUUID->"6f07e0a6-957e-4ea6-bcf4-\
+6fcd174a42f6"],
+
+Cell[BoxData[
+ RowBox[{"BoxWhiskerChart", "[", 
+  RowBox[{"idealistaset", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<PRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879523287491385*^9, 3.8795232967710247`*^9}},
+ CellLabel->"In[34]:=",ExpressionUUID->"fd2cd578-0fc9-46fa-b540-12c341944905"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 4", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 
+  3.879523349144401*^9}},ExpressionUUID->"3167dea8-27a3-4735-a717-\
+781455e0bbe8"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{"idealistaset", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<UNITPRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879523351364726*^9, 3.8795233581923723`*^9}},
+ CellLabel->"In[35]:=",ExpressionUUID->"57045884-ecbb-4c20-aaca-7dedd4d9902e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Histograma 2", "Subsubsection",
+ CellChangeTimes->{{3.879523190916604*^9, 3.879523194799938*^9}, {
+  3.879523396677374*^9, 
+  3.879523396716144*^9}},ExpressionUUID->"59569ddb-516e-4724-8cf7-\
+93e1cb8ae759"],
+
+Cell[BoxData[
+ RowBox[{"Histogram", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "\"\<UNITPRICE\>\""}], "]"}], "]"}], ",", 
+   RowBox[{"PlotRange", "->", "All"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.879523404016382*^9, 
+  3.87952340528682*^9}},ExpressionUUID->"18b477bc-3a45-4c56-afc0-\
+7ade3ba926dd"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Diagrama de caja 2", "Subsubsection",
+ CellChangeTimes->{{3.879523270609495*^9, 3.879523273887971*^9}, 
+   3.879523460834466*^9},ExpressionUUID->"d18f9149-d2c6-4b68-97a6-\
+b5cd60b32338"],
+
+Cell[BoxData[
+ RowBox[{"BoxWhiskerChart", "[", 
+  RowBox[{"idealistaset", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<UNITPRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879523465388095*^9, 
+  3.879523466500639*^9}},ExpressionUUID->"ad9430fc-88bf-4475-8072-\
+fda9d4c68f2b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 5", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+  3.879523492498904*^9, 
+  3.879523492566977*^9}},ExpressionUUID->"b56b9742-87b4-479a-9bbf-\
+f5c72e66b90f"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{"idealistaset", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<CONSTRUCTEDAREA\>\""}], "]"}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.879523494552853*^9, 3.879523508097992*^9}},
+ CellLabel->"In[36]:=",ExpressionUUID->"ce2fe40d-ce9c-4124-9365-8957d8e91c4a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Histograma 3", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+  3.879523525494925*^9, 
+  3.879523530012871*^9}},ExpressionUUID->"d4afd7ae-293f-4520-8a07-\
+7568f89dd64b"],
+
+Cell[BoxData[
+ RowBox[{"Histogram", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "\"\<CONSTRUCTEDAREA\>\""}], "]"}], "]"}], ",", 
+   RowBox[{"PlotRange", "->", "All"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.8795235386831217`*^9, 3.8795235574825583`*^9}},
+ CellLabel->"In[37]:=",ExpressionUUID->"0d298891-4255-4bb6-824e-b4f82f9a3821"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Histograma 4", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+  3.8795235333349333`*^9, 
+  3.8795235362763433`*^9}},ExpressionUUID->"65005aba-93e6-47d7-989e-\
+2ed525e24533"],
+
+Cell["\<\
+Selecciono las casas con menos de 274 metros cuadrados (el 1% top)\
+\>", "Text",
+ CellChangeTimes->{{3.879524024466813*^9, 
+  3.879524051332571*^9}},ExpressionUUID->"e81d6350-d396-4db8-8947-\
+a871f9f868e2"],
+
+Cell[BoxData[
+ RowBox[{"Histogram", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"#CONSTRUCTEDAREA", "<", "274"}], "&"}], "]"}], "]"}], "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<CONSTRUCTEDAREA\>\""}], "]"}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.879523926072342*^9, 3.8795240106245623`*^9}},
+ CellLabel->"In[40]:=",ExpressionUUID->"cf66e5fb-6090-45bc-a756-949418f89371"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 6 y resto de variables binarias", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+  3.8795235333349333`*^9, 3.8795235362763433`*^9}, {3.879524197952449*^9, 
+  3.879524200456567*^9}, {3.8795246932297287`*^9, 
+  3.8795247061077757`*^9}},ExpressionUUID->"2e2db017-64dc-4330-a99a-\
+655246701df7"],
+
+Cell["\<\
+Contar el n\[UAcute]mero de 0s y 1s y dividir por el total para tener la \
+proporci\[OAcute]n. Hacemos un bucle (table) para que lo haga directamente \
+para todas las variables\
+\>", "Text",
+ CellChangeTimes->{{3.879524745456235*^9, 3.8795247623276663`*^9}, {
+  3.879524977596746*^9, 
+  3.8795250132898407`*^9}},ExpressionUUID->"fd14188c-0471-468f-9746-\
+839a1bc8a977"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{"var", "->", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"#", "/", 
+         RowBox[{"Length", "[", "idealistaset", "]"}]}], "&"}], ")"}], "/@", 
+      RowBox[{"idealistaset", "[", 
+       RowBox[{"Counts", ",", "var"}], "]"}]}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"var", ",", 
+      RowBox[{"{", 
+       RowBox[{
+       "\"\<HASTERRACE\>\"", ",", "\"\<HASLIFT\>\"", ",", 
+        "\"\<HASAIRCONDITIONING\>\"", ",", "\"\<HASPARKINGSPACE\>\"", ",", 
+        "\"\<HASBOXROOM\>\"", ",", "\"\<HASWARDROBE\>\"", ",", 
+        "\"\<HASSWIMMINGPOOL\>\"", ",", "\"\<HASDOORMAN\>\"", ",", 
+        "\"\<HASGARDEN\>\"", ",", "\"\<ISDUPLEX\>\"", ",", "\"\<ISSTUDIO\>\"",
+         ",", "\"\<ISINTOPFLOOR\>\""}], "}"}]}], "}"}]}], 
+   "\[IndentingNewLine]", "]"}], "//", "TableForm"}]], "Input",
+ CellChangeTimes->{{3.879524216355137*^9, 3.879524416943104*^9}, {
+  3.879524475402995*^9, 3.879524668939165*^9}, {3.879524937489629*^9, 
+  3.87952494311957*^9}},
+ CellLabel->"In[72]:=",ExpressionUUID->"12f3d845-ce35-4c1d-a9b3-18d397ed548b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 7", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+   3.8795235333349333`*^9, 3.8795235362763433`*^9}, {3.879524197952449*^9, 
+   3.879524200456567*^9}, {3.8795246932297287`*^9, 3.8795247061077757`*^9}, 
+   3.879524786167321*^9},ExpressionUUID->"79d4b85f-3b52-4296-97fb-\
+a083cdb0f695"],
+
+Cell["\<\
+Contamos el n\[UAcute]mero de viviendas por tipo de habitaciones y ordenamos\
+\>", "Text",
+ CellChangeTimes->{{3.879524817853795*^9, 
+  3.879524842757313*^9}},ExpressionUUID->"83dcd32c-c490-401f-af6a-\
+bfcb1a1bbfaf"],
+
+Cell[BoxData[
+ RowBox[{"KeySort", "@", 
+  RowBox[{"Counts", "[", 
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "\"\<ROOMNUMBER\>\""}], "]"}], "]"}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.8795247902901793`*^9, 3.879524811727477*^9}},
+ CellLabel->"In[71]:=",ExpressionUUID->"441ba2cc-9718-4ad9-b18e-03f1a6b20a1e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Gr\[AAcute]fico de barras 1", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+   3.8795235333349333`*^9, 3.8795235362763433`*^9}, {3.879524197952449*^9, 
+   3.879524200456567*^9}, {3.8795246932297287`*^9, 3.8795247061077757`*^9}, 
+   3.879524786167321*^9, {3.879524869767351*^9, 
+   3.879524880460422*^9}},ExpressionUUID->"a2b4095a-8ab9-4b2f-8921-\
+cd8496eb55ec"],
+
+Cell["\<\
+Seleccion las viviendas con habitaciones por encima de 0 y por debajo de 6, \
+cuento, ordeno y hago el gr\[AAcute]fico de barras\
+\>", "Text",
+ CellChangeTimes->{{3.879525285654323*^9, 
+  3.879525311101206*^9}},ExpressionUUID->"27c8d5eb-b0b8-4883-ae9e-\
+13532a206df6"],
+
+Cell[BoxData[
+ RowBox[{"BarChart", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"Select", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"#", ">", "0"}], "&&", 
+         RowBox[{"#", "<", "6"}]}], "&"}], "]"}], "@", 
+      RowBox[{"idealistaset", "[", 
+       RowBox[{"All", ",", "\"\<ROOMNUMBER\>\""}], "]"}]}], "//", "Counts"}], 
+    "//", "KeySort"}], ",", 
+   RowBox[{"LabelingFunction", "\[Rule]", "Above"}], ",", 
+   RowBox[{"ChartLabels", "\[Rule]", "Automatic"}], ",", 
+   RowBox[{
+   "PlotLabel", "->", "\"\<Distribuci\[OAcute]n de ROOMNUMBER\>\""}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.87952488715777*^9, 3.8795248987823563`*^9}, {
+   3.879525028516301*^9, 3.879525087845096*^9}, {3.879525121723185*^9, 
+   3.8795251432947474`*^9}, 3.879525176872366*^9},
+ CellLabel->"In[77]:=",ExpressionUUID->"f7429f6d-38eb-49e1-801e-086f16f2f14e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 8", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+   3.8795235333349333`*^9, 3.8795235362763433`*^9}, {3.879524197952449*^9, 
+   3.879524200456567*^9}, {3.8795246932297287`*^9, 3.8795247061077757`*^9}, 
+   3.879524786167321*^9, {3.879524869767351*^9, 3.879524880460422*^9}, {
+   3.879525353069351*^9, 
+   3.879525355050893*^9}},ExpressionUUID->"31c293b5-a384-41fc-8673-\
+bbab3dee4d5b"],
+
+Cell[BoxData[
+ RowBox[{"KeySort", "@", 
+  RowBox[{"Counts", "[", 
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "\"\<BATHNUMBER\>\""}], "]"}], "]"}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.87952539177741*^9, 3.879525393006959*^9}},
+ CellLabel->"In[79]:=",ExpressionUUID->"c0ea2328-340b-40c3-8570-3011e4ebbbef"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Gr\[AAcute]fico de barras 2", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+   3.8795235333349333`*^9, 3.8795235362763433`*^9}, {3.879524197952449*^9, 
+   3.879524200456567*^9}, {3.8795246932297287`*^9, 3.8795247061077757`*^9}, 
+   3.879524786167321*^9, {3.879524869767351*^9, 3.879524880460422*^9}, {
+   3.879525414064601*^9, 
+   3.879525414267713*^9}},ExpressionUUID->"067206c1-ac01-4268-81cf-\
+d627daf2097a"],
+
+Cell["\<\
+Selecciono viviendas con mas de 0 y menos de 4 ba\[NTilde]os, cuento, ordeno \
+y hago el grafico de barras\
+\>", "Text",
+ CellChangeTimes->{{3.87952572291639*^9, 
+  3.879525754445322*^9}},ExpressionUUID->"41085e5f-33d4-46fc-a4a6-\
+b8cd06b6a987"],
+
+Cell[BoxData[
+ RowBox[{"BarChart", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"Select", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"#", ">", "0"}], "&&", 
+         RowBox[{"#", "<", "4"}]}], "&"}], "]"}], "@", 
+      RowBox[{"idealistaset", "[", 
+       RowBox[{"All", ",", "\"\<BATHNUMBER\>\""}], "]"}]}], "//", "Counts"}], 
+    "//", "KeySort"}], ",", 
+   RowBox[{"LabelingFunction", "\[Rule]", "Above"}], ",", 
+   RowBox[{"ChartLabels", "\[Rule]", "Automatic"}], ",", 
+   RowBox[{
+   "PlotLabel", "->", "\"\<Distribuci\[OAcute]n de BATHNUMBER\>\""}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.879525422676577*^9, 
+  3.8795254367910748`*^9}},ExpressionUUID->"1ccd9977-1ad4-4a41-afd2-\
+d46db9c644a9"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Gr\[AAcute]fico de barras 3", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+   3.8795235333349333`*^9, 3.8795235362763433`*^9}, {3.879524197952449*^9, 
+   3.879524200456567*^9}, {3.8795246932297287`*^9, 3.8795247061077757`*^9}, 
+   3.879524786167321*^9, {3.879524869767351*^9, 3.879524880460422*^9}, {
+   3.879525353069351*^9, 3.879525355050893*^9}, {3.879525595356848*^9, 
+   3.8795255955409403`*^9}, {3.87952564647346*^9, 
+   3.879525649625111*^9}},ExpressionUUID->"8afa775a-8af7-4aa6-9499-\
+8d160645753a"],
+
+Cell["\<\
+Cuento por modalidad, hago el gr\[AAcute]fico de barras y pongo las etiquetas\
+\
+\>", "Text",
+ CellChangeTimes->{{3.879525763867944*^9, 
+  3.879525792161047*^9}},ExpressionUUID->"43d982de-ee4a-44c2-8bcf-\
+90f9103a94cc"],
+
+Cell[BoxData[
+ RowBox[{"BarChart", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"idealistaset", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", "\"\<AMENITYID\>\""}], "]"}], "]"}], "//", 
+    "Counts"}], ",", 
+   RowBox[{"LabelingFunction", "\[Rule]", "Above"}], ",", 
+   RowBox[{"ChartLabels", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<Amueblado\>\"", ",", "\"\<S\[OAcute]lo cocina\>\"", ",", " ", 
+      "\"\<Sin muebles\>\""}], "}"}]}], ",", 
+   RowBox[{"PlotLabel", "->", "\"\<Distribuci\[OAcute]n de AMENITYID\>\""}]}],
+   "]"}]], "Input",
+ CellChangeTimes->{{3.879525601315845*^9, 3.8795256289611*^9}},
+ CellLabel->"In[81]:=",ExpressionUUID->"40efd0b5-b47b-4672-90ee-848043565c19"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Gr\[AAcute]fico de barras 4", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+   3.8795235333349333`*^9, 3.8795235362763433`*^9}, {3.879524197952449*^9, 
+   3.879524200456567*^9}, {3.8795246932297287`*^9, 3.8795247061077757`*^9}, 
+   3.879524786167321*^9, {3.879524869767351*^9, 3.879524880460422*^9}, {
+   3.879525353069351*^9, 3.879525355050893*^9}, {3.879525595356848*^9, 
+   3.8795255955409403`*^9}, {3.87952564647346*^9, 
+   3.879525662969591*^9}},ExpressionUUID->"439efcfb-d6c2-4e4f-96cd-\
+64ccd9384a3f"],
+
+Cell["\<\
+Elimino las observaciones \[OpenCurlyDoubleQuote]NA\[CloseCurlyDoubleQuote] y \
+con n\[UAcute]mero de planta -1, cuento, ordeno y hago el gr\[AAcute]fico de \
+barras\
+\>", "Text",
+ CellChangeTimes->{{3.8795257992765827`*^9, 
+  3.8795258447874928`*^9}},ExpressionUUID->"fcd2b1b3-7188-416f-bb5a-\
+aaa9506cfff6"],
+
+Cell[BoxData[
+ RowBox[{"BarChart", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"Select", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"#", "!=", 
+          RowBox[{"-", "1"}]}], "&&", 
+         RowBox[{"#", "!=", "\"\<NA\>\""}]}], "&"}], "]"}], "@", 
+      RowBox[{"idealistaset", "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "\"\<FLOORCLEAN\>\""}], "]"}], "]"}]}], "//", 
+     "Counts"}], "//", "KeySort"}], ",", 
+   RowBox[{"LabelingFunction", "\[Rule]", "Above"}], ",", 
+   RowBox[{"ChartLabels", "\[Rule]", "Automatic"}], ",", 
+   RowBox[{
+   "PlotLabel", "->", "\"\<Distribuci\[OAcute]n de FLOORCLEAN\>\""}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.879525679780917*^9, 3.879525680184498*^9}},
+ CellLabel->"In[82]:=",ExpressionUUID->"81e44540-d3fc-4ac4-9f0e-128747d06ad8"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 9", "Subsubsection",
+ CellChangeTimes->{{3.879525870307333*^9, 
+  3.879525872564951*^9}},ExpressionUUID->"f8d3d796-ae11-4695-8ff7-\
+56c82f0501d7"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{"idealistaset", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<CADCONSTRUCTIONYEAR\>\""}], "]"}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.8795258923287287`*^9, 3.8795259043850594`*^9}, {
+  3.879525967205042*^9, 3.879525968278305*^9}},
+ CellLabel->"In[84]:=",ExpressionUUID->"20cc195b-9a71-4a09-914a-53a44e180ad8"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Histograma 5", "Subsubsection",
+ CellChangeTimes->{{3.8795233478863497`*^9, 3.879523349144401*^9}, {
+  3.8795235333349333`*^9, 3.8795235362763433`*^9}, {3.879525990172308*^9, 
+  3.8795259902967167`*^9}},ExpressionUUID->"29f2a039-0da6-487d-bb6a-\
+aa6cb128b188"],
+
+Cell["\<\
+Hacemos un histograma que simula la distribuci\[OAcute]n de las viviendas por \
+encima del a\[NTilde]o 1800, si l hacemos de rango completa simplemente queda \
+m\[AAcute]s estrecho porque hay una vivienda del 1591\
+\>", "Text",
+ CellChangeTimes->{{3.8795260256723347`*^9, 
+  3.879526121705736*^9}},ExpressionUUID->"23a488b0-4d6a-4f09-8fad-\
+813be04666bb"],
+
+Cell[BoxData[
+ RowBox[{"SmoothHistogram", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"#", ">", "1000"}], "&"}], "]"}], "@", 
+    RowBox[{"idealistaset", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", "\"\<CADCONSTRUCTIONYEAR\>\""}], "]"}], "]"}]}], 
+   ",", 
+   RowBox[{"PlotRange", "->", "All"}], ",", 
+   RowBox[{"PlotTheme", "->", "\"\<Web\>\""}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.8795259991611233`*^9, 3.879525999774876*^9}, {
+  3.879526080001236*^9, 3.879526080424604*^9}},
+ CellLabel->"",ExpressionUUID->"0926270b-bd1b-4b0d-9490-4a2353fbe407"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Datos espaciales y mapas", "Section",
+ CellChangeTimes->{{3.879526150020423*^9, 
+  3.8795261532841473`*^9}},ExpressionUUID->"3f2e5651-c952-4fce-b7ee-\
+a8e90faa97bb"],
+
+Cell[CellGroupData[{
+
+Cell["Preparaci\[OAcute]n de los barrios", "Subsection",
+ CellChangeTimes->{{3.879531360053348*^9, 
+  3.879531367847535*^9}},ExpressionUUID->"70d9678c-9d36-427d-8602-\
+6c0edec28173"],
+
+Cell["Importamos los datos de coordenadas de los barrios", "Text",
+ CellChangeTimes->{{3.879529416884042*^9, 
+  3.8795294235146914`*^9}},ExpressionUUID->"46be26d1-d611-4488-9ff7-\
+41226ec5e76c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"rawcoordenadas", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+    "\"\</Users/davidrp/Archivo/Idealista/Valencia_polygons.csv\>\"", ",", 
+     "\"\<Table\>\"", ",", 
+     RowBox[{"\"\<FieldSeparators\>\"", "->", 
+      RowBox[{"{", "\"\<;\>\"", "}"}]}]}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{3.879529546476879*^9},
+ CellLabel->"In[87]:=",ExpressionUUID->"d18275ae-f5cc-40e0-a0f9-a620c980e278"],
+
+Cell["\<\
+Hacemos un diccionario que a cada nombre debarrio le da las coordenadas de \
+sus vertices. En la parte de coordenadas tenemos que coges de los string las \
+posiciones entre 16 y -4 para eliminar MULTIPOLYGON y cambiar la coma por un \
+espacio para poder ajustarlo a nuestro datatype\
+\>", "Text",
+ CellChangeTimes->{{3.879529600094679*^9, 3.879529641996771*^9}, {
+  3.879529699280437*^9, 3.8795298096748667`*^9}, {3.879530415536907*^9, 
+  3.8795304514644127`*^9}},ExpressionUUID->"a267ae39-fff5-4b5d-bda0-\
+bcb156afff28"],
+
+Cell[BoxData[
+ RowBox[{"coordenadasbarrios", " ", "=", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"rawcoordenadas", "[", 
+      RowBox[{"[", 
+       RowBox[{"i", ",", "2"}], "]"}], "]"}], "->", 
+     RowBox[{"Reverse", "/@", 
+      RowBox[{"Partition", "[", 
+       RowBox[{
+        RowBox[{"ToExpression", "/@", 
+         RowBox[{"StringSplit", "[", 
+          RowBox[{"StringReplace", "[", 
+           RowBox[{
+            RowBox[{"StringTake", "[", 
+             RowBox[{
+              RowBox[{"rawcoordenadas", "[", 
+               RowBox[{"[", 
+                RowBox[{"i", ",", "3"}], "]"}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"16", ",", 
+                RowBox[{"-", "4"}]}], "}"}]}], "]"}], ",", 
+            RowBox[{"\"\<,\>\"", "->", "\"\< \>\""}]}], "]"}], "]"}]}], ",", 
+        "2"}], "]"}]}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "2", ",", 
+      RowBox[{"Length", "[", "rawcoordenadas", "]"}]}], "}"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.879529562013591*^9, 3.8795295719816008`*^9}},
+ CellLabel->"In[88]:=",ExpressionUUID->"c549d468-7bea-4e10-bafd-a4e740304561"],
+
+Cell["\<\
+Genero los pol\[IAcute]gonos de cada barrio a partir de sus coordenadas y los \
+guardo en una lista\
+\>", "Text",
+ CellChangeTimes->{{3.879530217401743*^9, 
+  3.879530253153417*^9}},ExpressionUUID->"61aeaf4f-d7ae-4e62-b9c5-\
+9adf95d1b1b6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"poligonosbarrios", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"Polygon", "[", 
+      RowBox[{
+       RowBox[{"Values", "[", "coordenadasbarrios", "]"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"Length", "[", "coordenadasbarrios", "]"}]}], "}"}]}], "]"}]}],
+   ";"}]], "Input",
+ CellChangeTimes->{{3.8795300943598146`*^9, 3.879530163547411*^9}, {
+  3.87953020531948*^9, 3.879530213544058*^9}},
+ CellLabel->"In[97]:=",ExpressionUUID->"b729915f-97dd-401a-8197-6a47ff42aa93"],
+
+Cell["\<\
+Extraigo las coordenadas de cada elemento del dataset y las guardo en una \
+lista, las funciones values y normal sirven solo para darle el datatype que \
+necesitar\[EAcute]\
+\>", "Text",
+ CellChangeTimes->{{3.87953028062319*^9, 3.879530294588903*^9}, {
+  3.879530364450629*^9, 3.879530380358347*^9}, {3.8795304719787693`*^9, 
+  3.8795304731552553`*^9}},ExpressionUUID->"9790fce2-2569-422a-8607-\
+2321090ba34b"],
+
+Cell[BoxData[
+ RowBox[{"coordenadasviviendas", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"idealistaset", "[", 
+     RowBox[{"All", ",", 
+      RowBox[{"{", 
+       RowBox[{"\"\<LATITUDE\>\"", ",", "\"\<LONGITUDE\>\""}], "}"}]}], "]"}],
+     "//", "Values"}], "//", "Normal"}]}]], "Input",
+ CellChangeTimes->{{3.879530298152409*^9, 3.879530388049595*^9}},
+ CellLabel->
+  "In[100]:=",ExpressionUUID->"31bb8781-50ed-4c66-9781-618177175949"],
+
+Cell["\<\
+Aqu\[IAcute] uso la funci\[OAcute]n RegionMember para calcular para cada \
+inmueble a qu\[EAcute] barrio pertenece. Hago un bucle pasando por la lista \
+de pol\[IAcute]gonos de los barrios y me da un True o un False, con la funci\
+\[OAcute]n Position extraigo de esta lista el lugar que tiene la respuestra \
+True y es lo que guardo, para luego buscar por esa posici\[OAcute]n el barrio \
+y ya tener para cada inmueble su barrio.\
+\>", "Text",
+ CellChangeTimes->{{3.879530493032422*^9, 3.879530612975827*^9}, {
+  3.879530738509755*^9, 
+  3.8795307458281403`*^9}},ExpressionUUID->"bb20a864-2d2d-4e5d-9c1e-\
+070ffdc0e8f8"],
+
+Cell[BoxData[
+ RowBox[{"posbarriosporvivienda", "=", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{"Position", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"RegionMember", "[", 
+         RowBox[{"#", ",", 
+          RowBox[{"coordenadasviviendas", "[", 
+           RowBox[{"[", "i", "]"}], "]"}]}], "]"}], "&"}], "/@", 
+       "poligonosbarrios"}], ",", "True"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", 
+      RowBox[{"Length", "[", "coordenadasviviendas", "]"}]}], "}"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.87953063053395*^9, 3.879530676918309*^9}},
+ CellLabel->"",ExpressionUUID->"6973152f-051c-4058-8254-8c472ccc66d2"],
+
+Cell["\<\
+Ahora creo una lista de longitud el set con los barrios, simplemente hago una \
+nueva columna en mi dataset que se llama BARRIO y en la que guardo el nombre \
+del barrio y sus coordenadas para cada vivienda.\
+\>", "Text",
+ CellChangeTimes->{{3.879530878531899*^9, 3.879530960472134*^9}, {
+  3.879531110414613*^9, 
+  3.879531110780984*^9}},ExpressionUUID->"0928f4ea-9ef8-4a20-9f89-\
+ff230a71c64e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"barrios", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"<|", 
+      RowBox[{"\"\<BARRIO\>\"", "->", 
+       RowBox[{"coordenadasbarrios", "[", 
+        RowBox[{"[", "#", "]"}], "]"}]}], "|>"}], "&"}], "@", 
+    "posbarriosporvivienda"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.879531115574511*^9, 3.879531116725604*^9}, 
+   3.879531177617985*^9, {3.879531319766173*^9, 3.879531330569313*^9}, {
+   3.87953143027588*^9, 
+   3.8795314596749353`*^9}},ExpressionUUID->"91cd5d4f-13df-4166-b3d8-\
+37f2e5b4e4cc"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"idset", "=", 
+   RowBox[{"Merge", "[", 
+    RowBox[{"idealistaset", ",", "barrios"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.8795314077405787`*^9, 3.879531420893394*^9}, {
+  3.879531474259055*^9, 
+  3.879531480176045*^9}},ExpressionUUID->"7d5c8d1c-c3cd-4ae3-be5d-\
+3b6ce4065ab5"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapas y tablas", "Subsection",
+ CellChangeTimes->{{3.879531373690854*^9, 3.8795313740535173`*^9}, {
+  3.879531548342965*^9, 
+  3.8795315549280157`*^9}},ExpressionUUID->"33c6de95-c370-4a17-b563-\
+726e9fc9d6af"],
+
+Cell["\<\
+Para una cierta normalizaci\[OAcute]n, quitamos los valores que vimos en la \
+parte descriptiva\
+\>", "Text",
+ CellChangeTimes->{{3.879532214267983*^9, 
+  3.8795322273838997`*^9}},ExpressionUUID->"8e2e6237-a5b6-422a-8795-\
+8234b1480fa2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"idealistaset", "=", 
+   RowBox[{"idset", "[", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"#ROOMNUMBER", ">", "0"}], "&&", 
+       RowBox[{"#ROOMNUMBER", "<", "6"}], "&&", 
+       RowBox[{"#BATHNUMBER", ">", "0"}], "&&", 
+       RowBox[{"#BATHNUMBER", "<", "4"}], "&&", 
+       RowBox[{"#UNITPRICE", "<", "4458.94"}]}], "&"}], "]"}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.879532171893931*^9, 3.879532189201302*^9}, 
+   3.87953223038411*^9},
+ CellLabel->
+  "In[137]:=",ExpressionUUID->"e4668fb8-4845-4b2c-9e98-a22b6b11922c"],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 1", "Subsubsection",
+ CellChangeTimes->{{3.879532281349468*^9, 
+  3.8795322837446003`*^9}},ExpressionUUID->"ebbec229-3eeb-4274-bf3e-\
+8133a4952ecd"],
+
+Cell["\<\
+Calculamos el n\[UAcute]mero de veces que se repite cada barrio y hacemos la \
+tabla. Lo tenemos que hacer de esta forma porque no se eligi\[OAcute] \
+correctamente el el datatype, us\[EAcute] dicccionario cuando deber\[IAcute]a \
+haber hecho probablemente dos columnas.\
+\>", "Text",
+ CellChangeTimes->{{3.879532287269204*^9, 3.879532342193878*^9}, {
+  3.879532419809909*^9, 
+  3.8795325252362013`*^9}},ExpressionUUID->"e038a588-fbd0-425a-9ca1-\
+b403b5a6bf2f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"bar", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"Drop", "[", 
+       RowBox[{
+        RowBox[{"idealistaset", "[", 
+         RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"-", "6"}], "}"}]}], "]"}], "//", "Keys"}], "//", "Normal"}],
+     "//", "Keys"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.87953234475303*^9, 3.8795323985484943`*^9}},
+ CellLabel->
+  "In[141]:=",ExpressionUUID->"cddbe3f8-b926-4712-9e60-2fecf8d31d3e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"countbar", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Length", "/@", 
+      RowBox[{"Drop", "[", 
+       RowBox[{
+        RowBox[{"idealistaset", "[", 
+         RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"-", "6"}], "}"}]}], "]"}]}], "//", "Values"}], "//", 
+    "Normal"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.8795323589900093`*^9, 3.8795324011499166`*^9}},
+ CellLabel->
+  "In[142]:=",ExpressionUUID->"30239fcb-7ac6-42a5-94a9-aa9bfcc7cbe9"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AssociationThread", "[", 
+    RowBox[{"bar", "->", "countbar"}], "]"}], "//", "Dataset"}], "//", 
+  "ReverseSort"}]], "Input",
+ CellChangeTimes->{{3.879532381798563*^9, 3.8795323883582687`*^9}},
+ CellLabel->
+  "In[143]:=",ExpressionUUID->"de119a7e-2199-4478-be16-374659b9f00b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 1", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 
+  3.879532536469425*^9}},ExpressionUUID->"b8656171-8465-4112-a3e5-\
+e1ec91289184"],
+
+Cell["\<\
+La funci\[OAcute]n GeoRegionValuePlot toma como argumentos una lista de \
+regiones y a cada una le hemos asignado un valor, en este caso para cada \
+barrio le hemos dado el n\[UAcute]mero de viviendas en ese barrio y nos \
+representa el mapa 1\
+\>", "Text",
+ CellChangeTimes->{{3.879532647009605*^9, 3.879532713151126*^9}, {
+  3.879532826155727*^9, 
+  3.8795328288795033`*^9}},ExpressionUUID->"ae70def5-4fc4-4752-82e4-\
+df109e83627c"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"GeoPolygon", "[", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"Drop", "[", 
+             RowBox[{
+              RowBox[{"idealistaset", "[", 
+               RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"-", "6"}], "}"}]}], "]"}], "//", "Keys"}], "//", 
+           "Normal"}], "//", "Values"}], ")"}], "[", 
+        RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+      RowBox[{"countbar", "[", 
+       RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "73"}], "}"}]}], "]"}], ",", 
+   RowBox[{"GeoLabels", "->", "True"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.879532568655086*^9, 3.879532580417692*^9}, {
+  3.879532616271748*^9, 
+  3.879532633243786*^9}},ExpressionUUID->"1b07e023-fa88-4dfa-aa60-\
+d1592099180d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 2", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 
+  3.879532749483144*^9}},ExpressionUUID->"98156b80-021f-4995-b990-\
+c072c9da9238"],
+
+Cell["\<\
+Igual que antes, calculamos la edad media de las viviendas por barrio y \
+volgemos a aplicar la funcion GeoRegionValuePlot\
+\>", "Text",
+ CellChangeTimes->{{3.879532797766831*^9, 
+  3.8795328224686947`*^9}},ExpressionUUID->"13351114-699c-4e8a-bc40-\
+1f75c2c5ce99"],
+
+Cell[BoxData[
+ RowBox[{"a\[NTilde]os", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{"Drop", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"idealistaset", "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], "[", 
+         RowBox[{"[", 
+          RowBox[{"All", ",", "All", ",", "\"\<CADCONSTRUCTIONYEAR\>\""}], 
+          "]"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"-", "6"}], "}"}]}], "]"}]}], "//", "Values"}], "//", 
+    "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{{3.879532780386722*^9, 
+  3.879532780920951*^9}},ExpressionUUID->"5c7dd907-5516-4cc7-8c0e-\
+191cada8047e"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{"idealistaset", "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"-", "6"}], "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"a\[NTilde]os", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879532790461986*^9, 
+  3.879532791131434*^9}},ExpressionUUID->"f36e94ac-2841-43bf-b02a-\
+fb51b1fa2f85"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 3", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}},ExpressionUUID->"0877fbce-a3bd-4a0f-88f2-\
+48257183b23d"],
+
+Cell["\<\
+Exactamente igual que en el ejemplo anterior pero ahora con los metros medios \
+de viviendas por barrio\
+\>", "Text",
+ CellChangeTimes->{{3.8795328715022306`*^9, 
+  3.87953289268526*^9}},ExpressionUUID->"197a6927-6135-4690-bc61-\
+ed72882f7f7d"],
+
+Cell[BoxData[
+ RowBox[{"metros", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{"Drop", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"idsetfinal", "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], "[", 
+         RowBox[{"[", 
+          RowBox[{"All", ",", "All", ",", "\"\<CONSTRUCTEDAREA\>\""}], "]"}], 
+         "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"-", "6"}], "}"}]}], "]"}]}], "//", "Values"}], "//", 
+    "Normal"}], "//", "N"}]}]], "Input",ExpressionUUID->"4183daf7-0c0d-4c0a-\
+b3dd-8988e37cc6a3"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{"idsetfinal", "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"-", "6"}], "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"metros", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",ExpressionUUID->\
+"2959bb6e-8d79-4050-8c8e-c83f8c1c8914"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 2", "Subsubsection",
+ CellChangeTimes->{{3.879532281349468*^9, 3.8795322837446003`*^9}, {
+  3.879532979583126*^9, 
+  3.879532979677329*^9}},ExpressionUUID->"921d71c6-9343-4ce8-9670-\
+ec34fe4cfdf5"],
+
+Cell["Resumen estad\[IAcute]stica para viviendas de una habitaci\[OAcute]n", \
+"Text",
+ CellChangeTimes->{{3.8795331035623293`*^9, 
+  3.879533112530768*^9}},ExpressionUUID->"68fa9139-de32-451d-8b3b-\
+37894132acec"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"#ROOMNUMBER", "==", "1"}], "&"}], "]"}], "]"}], "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<PRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533002410942*^9, 
+  3.8795330223881702`*^9}},ExpressionUUID->"ff6fca2d-e537-4202-99b5-\
+15cc2e0eb222"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 4", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.879533049265882*^9, 
+  3.879533049361668*^9}},ExpressionUUID->"1667a6ed-14dc-4ba7-ac1b-\
+db9daedbfb7b"],
+
+Cell["\<\
+Genero los precios medios para las viviendas de una habitacion y uso la funci\
+\[OAcute]n GeoRegionValuePlot\
+\>", "Text",
+ CellChangeTimes->{{3.879533123308429*^9, 
+  3.879533144754594*^9}},ExpressionUUID->"3cb8c7ed-ef49-4532-a8f0-\
+16973a463c80"],
+
+Cell[BoxData[
+ RowBox[{"precios1", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "1"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<PRICE\>\""}], "]"}], "]"}]}], "//",
+      "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, {3.879533248272071*^9, 
+   3.879533248683875*^9}},ExpressionUUID->"047ed07f-b93f-4846-9765-\
+729fe09da4c3"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "1"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"precios1", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 
+  3.879533221883081*^9}},ExpressionUUID->"7980c567-f472-4c2b-889c-\
+4f700d923ab7"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 5", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.879533051326139*^9, 
+  3.879533051391081*^9}},ExpressionUUID->"a3584626-ff94-4710-95f4-\
+a8e5fc349014"],
+
+Cell["\<\
+Genero los precios por metro cuadrado medios para las viviendas de una \
+habitacion y uso la funci\[OAcute]n GeoRegionValuePlot\
+\>", "Text",
+ CellChangeTimes->{{3.8795332550157003`*^9, 
+  3.8795332663698473`*^9}},ExpressionUUID->"8b9d99e1-b890-4119-a862-\
+5b7c6c5960e0"],
+
+Cell[BoxData[
+ RowBox[{"uprecios1", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "1"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<UNITPRICE\>\""}], "]"}], "]"}]}],
+      "//", "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 
+   3.8795332363991013`*^9},ExpressionUUID->"015da083-6640-4578-a001-\
+4baa4f5c2994"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "1"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"uprecios1", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 
+  3.879533239689431*^9}},ExpressionUUID->"637167de-ea9b-4fa0-a9d5-\
+b3292a043b77"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 3", "Subsubsection",
+ CellChangeTimes->{{3.879532281349468*^9, 3.8795322837446003`*^9}, {
+  3.8795329817216187`*^9, 
+  3.8795329818159723`*^9}},ExpressionUUID->"4be521a9-a8d3-4aae-af24-\
+416d0aad80c5"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"#ROOMNUMBER", "==", "2"}], "&"}], "]"}], "]"}], "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<PRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533005555656*^9, 
+  3.87953302434614*^9}},ExpressionUUID->"836ec553-0667-4896-b050-\
+1c0f8285e7c1"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 6", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.879533278686809*^9, 
+  3.879533278771329*^9}},ExpressionUUID->"59823d57-d3f7-4bb0-aca7-\
+a431f59714cf"],
+
+Cell[BoxData[
+ RowBox[{"precios2", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "2"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<PRICE\>\""}], "]"}], "]"}]}], "//",
+      "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 3.8795332363991013`*^9, {3.879533285937071*^9, 
+   3.879533315343066*^9}},ExpressionUUID->"b859da42-f1a7-4522-bf1f-\
+6b2ec11fa52d"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "2"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"precios2", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 3.879533239689431*^9}, {
+  3.879533297126926*^9, 
+  3.8795333182812977`*^9}},ExpressionUUID->"aa1e69f0-a1c7-4c1f-9345-\
+c5204a11a2dc"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 7", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.879533281455636*^9, 
+  3.879533281554483*^9}},ExpressionUUID->"edf3d4f2-79f4-49fb-8a26-\
+1c93d20a17e5"],
+
+Cell[BoxData[
+ RowBox[{"uprecios2", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "2"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<UNITPRICE\>\""}], "]"}], "]"}]}],
+      "//", "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 3.8795332363991013`*^9, {3.8795332901152477`*^9, 
+   3.8795333201573763`*^9}},ExpressionUUID->"5b5850b3-c4d1-4174-9f66-\
+05c368e6f68a"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "2"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"uprecios2", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 3.879533239689431*^9}, {
+  3.8795333038555603`*^9, 
+  3.879533322347329*^9}},ExpressionUUID->"17f9ab0b-b899-4961-80e0-\
+e7c176ae4300"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 4", "Subsubsection",
+ CellChangeTimes->{{3.879532281349468*^9, 3.8795322837446003`*^9}, {
+  3.879532983368273*^9, 
+  3.879532983411478*^9}},ExpressionUUID->"90b8d13a-d7a9-48a8-9cf1-\
+f32ae83958c4"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"#ROOMNUMBER", "==", "3"}], "&"}], "]"}], "]"}], "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<PRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533011954895*^9, 
+  3.879533026375136*^9}},ExpressionUUID->"d55a37c0-0fec-4278-9629-\
+2af46cb13997"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 8", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.879533325783534*^9, 
+  3.879533326029112*^9}},ExpressionUUID->"9b9a1fc1-2978-47f1-84b0-\
+91101de2ed3f"],
+
+Cell[BoxData[
+ RowBox[{"precios3", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "3"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<PRICE\>\""}], "]"}], "]"}]}], "//",
+      "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 3.8795332363991013`*^9, {3.8795333345159283`*^9, 
+   3.879533363562818*^9}},ExpressionUUID->"b6dfe005-0fc4-4188-9789-\
+d823bee812bf"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "3"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"precios3", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 3.879533239689431*^9}, {
+  3.879533339753582*^9, 
+  3.879533356762841*^9}},ExpressionUUID->"86899ce7-03d5-4605-92ed-\
+c85a3d2b3449"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 9", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.879533327842696*^9, 
+  3.87953332821863*^9}},ExpressionUUID->"d08ff116-dba7-420a-9024-\
+00b8b5dbc0af"],
+
+Cell[BoxData[
+ RowBox[{"uprecios3", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "3"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<UNITPRICE\>\""}], "]"}], "]"}]}],
+      "//", "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 3.8795332363991013`*^9, {3.879533368606748*^9, 
+   3.87953337398829*^9}},ExpressionUUID->"f8c32070-14a8-4709-b691-\
+be04f6ea13cb"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "3"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"uprecios3", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 3.879533239689431*^9}, {
+  3.8795333592821283`*^9, 
+  3.879533375915969*^9}},ExpressionUUID->"fe43ed1e-781c-46bf-aee2-\
+bf5645ac71b6"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 5", "Subsubsection",
+ CellChangeTimes->{{3.879532281349468*^9, 3.8795322837446003`*^9}, {
+  3.879532984988101*^9, 
+  3.879532985084792*^9}},ExpressionUUID->"93d15110-3a21-47b5-8ed9-\
+df2f48aee109"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"#ROOMNUMBER", "==", "4"}], "&"}], "]"}], "]"}], "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<PRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.8795330163928328`*^9, 
+  3.879533028617671*^9}},ExpressionUUID->"9a658f69-142f-44be-845c-\
+32b53a6b0cd8"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 10", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.879533382434086*^9, 
+  3.8795333827679443`*^9}},ExpressionUUID->"0c98e074-7519-43b5-bc4f-\
+2a1c6da899f5"],
+
+Cell[BoxData[
+ RowBox[{"precios4", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "4"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<PRICE\>\""}], "]"}], "]"}]}], "//",
+      "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 3.8795332363991013`*^9, {3.879533398958941*^9, 
+   3.879533409170874*^9}, {3.879533461018181*^9, 
+   3.8795334617919827`*^9}},ExpressionUUID->"040b2952-3988-4368-94b8-\
+3b8dd1f0f1be"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "4"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"precios4", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 3.879533239689431*^9}, {
+  3.879533411273522*^9, 
+  3.879533425914639*^9}},ExpressionUUID->"78155d90-1cf2-4474-9a5f-\
+7caddeba82ef"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 11", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.87953338427201*^9, 
+  3.8795333846782703`*^9}},ExpressionUUID->"861b5b0c-e6da-4ff6-b274-\
+89178d332b28"],
+
+Cell[BoxData[
+ RowBox[{"uprecios4", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "4"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<UNITPRICE\>\""}], "]"}], "]"}]}],
+      "//", "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 3.8795332363991013`*^9, {3.879533404078355*^9, 
+   3.87953341414571*^9}},ExpressionUUID->"051d99bd-150b-450d-b2e9-\
+3a09938d8746"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "4"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"uprecios4", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 3.879533239689431*^9}, {
+  3.879533416634828*^9, 
+  3.879533429085513*^9}},ExpressionUUID->"72c33517-4b45-4b6c-a291-\
+a5824698869c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tabla 6", "Subsubsection",
+ CellChangeTimes->{{3.879532281349468*^9, 3.8795322837446003`*^9}, {
+  3.8795329867891417`*^9, 
+  3.879532986888791*^9}},ExpressionUUID->"b142cfc4-8060-414a-a77d-\
+1cf4e2c787a9"],
+
+Cell[BoxData[
+ RowBox[{"summary", "[", 
+  RowBox[{
+   RowBox[{"idealistaset", "[", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"#ROOMNUMBER", "==", "5"}], "&"}], "]"}], "]"}], "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "\"\<PRICE\>\""}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533018810957*^9, 
+  3.8795330195797777`*^9}},ExpressionUUID->"354ddd6f-94f6-4ff8-8633-\
+975b0e5e567c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 12", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.879533386392234*^9, 
+  3.87953338677142*^9}},ExpressionUUID->"3cd91f82-b678-4c7a-9f5a-\
+8d32674ea32b"],
+
+Cell[BoxData[
+ RowBox[{"precios5", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "5"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<PRICE\>\""}], "]"}], "]"}]}], "//",
+      "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 3.8795332363991013`*^9, {3.879533433204523*^9, 
+   3.879533464022723*^9}, 
+   3.879533509686863*^9},ExpressionUUID->"e49b2399-706b-477e-96bd-\
+ac3fbf5264aa"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "5"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"precios5", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 3.879533239689431*^9}, {
+  3.87953344099743*^9, 
+  3.879533454650374*^9}},ExpressionUUID->"b3685b42-096a-4717-91a7-\
+bf13193a6537"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mapa 13", "Subsubsection",
+ CellChangeTimes->{{3.87953253416918*^9, 3.879532536469425*^9}, {
+  3.879532749420219*^9, 3.879532749483144*^9}, {3.879532859594892*^9, 
+  3.8795328596603937`*^9}, {3.8795333895202713`*^9, 
+  3.879533389736362*^9}},ExpressionUUID->"5f5b18d0-82de-4adc-91ac-\
+ed0bb7787ac4"],
+
+Cell[BoxData[
+ RowBox[{"uprecios5", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Mean", "/@", 
+      RowBox[{
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"idealistaset", "[", 
+            RowBox[{"Select", "[", 
+             RowBox[{
+              RowBox[{"#ROOMNUMBER", "==", "5"}], "&"}], "]"}], "]"}], ")"}], 
+          "[", 
+          RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+         RowBox[{"{", "6", "}"}]}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "All", ",", "\"\<UNITPRICE\>\""}], "]"}], "]"}]}],
+      "//", "Values"}], "//", "Normal"}], "//", "N"}]}]], "Input",
+ CellChangeTimes->{
+  3.8795330831822357`*^9, {3.8795331531083307`*^9, 3.8795331611909227`*^9}, 
+   3.879533199223567*^9, 3.8795332363991013`*^9, {3.87953343573955*^9, 
+   3.879533443011591*^9}},ExpressionUUID->"4bd3f741-2147-4ff7-a0fa-\
+206f9ba84e4c"],
+
+Cell[BoxData[
+ RowBox[{"GeoRegionValuePlot", "[", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GeoPolygon", "[", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"Drop", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"idealistaset", "[", 
+                RowBox[{"Select", "[", 
+                 RowBox[{
+                  RowBox[{"#ROOMNUMBER", "==", "5"}], "&"}], "]"}], "]"}], 
+               ")"}], "[", 
+              RowBox[{"GroupBy", "[", "\"\<BARRIO\>\"", "]"}], "]"}], ",", 
+             RowBox[{"{", "6", "}"}]}], "]"}], "//", "Keys"}], "//", 
+          "Normal"}], "//", "Values"}], ")"}], "[", 
+       RowBox[{"[", "i", "]"}], "]"}], "]"}], "->", 
+     RowBox[{"uprecios5", "[", 
+      RowBox[{"[", "i", "]"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"i", ",", "73"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.879533155340589*^9, 3.879533239689431*^9}, {
+  3.8795334452188587`*^9, 
+  3.879533450211194*^9}},ExpressionUUID->"7c51591f-25ae-447a-9d3d-\
+5cc8cb82bab8"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1280, 1302},
+WindowMargins->{{Automatic, 0}, {Automatic, -458}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+FrontEndVersion->"13.1 for Mac OS X ARM (64-bit) (June 21, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"bc036d3d-c0ea-483a-b8ea-ed3dfd88ab17"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[583, 22, 163, 3, 98, "Title",ExpressionUUID->"95007a8a-78bd-44a0-8319-bee77d60613d"],
+Cell[749, 27, 166, 3, 53, "Subtitle",ExpressionUUID->"dbda51d8-bb27-4526-8871-be12e0a88927"],
+Cell[CellGroupData[{
+Cell[940, 34, 179, 3, 67, "Section",ExpressionUUID->"38e84b7e-fd32-49e5-b2b2-3bd85ee51f24"],
+Cell[1122, 39, 156, 3, 35, "Text",ExpressionUUID->"67372099-326b-4667-9a70-f08a274ea35e"],
+Cell[1281, 44, 440, 11, 30, "Input",ExpressionUUID->"4aa5b196-73b9-4ba9-9881-ff261b55846e"],
+Cell[1724, 57, 158, 3, 35, "Text",ExpressionUUID->"c7d342ac-ae88-48ee-91eb-7e78883fafb6"],
+Cell[1885, 62, 753, 20, 30, "Input",ExpressionUUID->"5f4ff4db-0b2d-4df3-948f-15b06bbae1d5"],
+Cell[2641, 84, 214, 4, 35, "Text",ExpressionUUID->"c5e52005-d3d9-4377-acfe-10988fb994d2"],
+Cell[2858, 90, 590, 15, 30, "Input",ExpressionUUID->"837946b7-f387-419b-8290-702bceb3b80b"],
+Cell[3451, 107, 282, 7, 35, "Text",ExpressionUUID->"9f92d3bb-8063-413a-b301-ddd271feaf11"],
+Cell[3736, 116, 3229, 79, 556, "Input",ExpressionUUID->"5ef04fc2-c6dc-4812-88b9-41bc9f7ac7ee"],
+Cell[6968, 197, 309, 7, 35, "Text",ExpressionUUID->"d69bc233-339e-47af-b7eb-ce1a28cac366"],
+Cell[7280, 206, 761, 16, 52, "Input",ExpressionUUID->"bedd96c8-e744-4f03-88da-19669996cb2a"],
+Cell[8044, 224, 290, 6, 35, "Text",ExpressionUUID->"771f8753-cbbf-4a78-a48b-f54e11313cb1"],
+Cell[8337, 232, 416, 10, 30, "Input",ExpressionUUID->"422cb6ab-bd00-442a-b12a-54be9b34f293"],
+Cell[8756, 244, 432, 9, 30, "Input",ExpressionUUID->"f006d586-ed8b-43ce-9019-11edc5f7c337"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9225, 258, 170, 3, 67, "Section",ExpressionUUID->"d0e354ac-9b7f-484a-a76c-6a145151e92b"],
+Cell[CellGroupData[{
+Cell[9420, 265, 158, 3, 45, "Subsubsection",ExpressionUUID->"cf74aae8-8551-42a6-904d-bf4596eac8aa"],
+Cell[9581, 270, 352, 7, 35, "Text",ExpressionUUID->"87fe5583-8343-4611-9fee-e81ac5dea0c0"],
+Cell[9936, 279, 512, 10, 30, "Input",ExpressionUUID->"ff97da46-111d-4937-b81f-b1e4d7adb698"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10485, 294, 160, 3, 45, "Subsubsection",ExpressionUUID->"85b4b40d-bd63-49e6-9819-5dd791f9acfe"],
+Cell[10648, 299, 192, 3, 35, "Text",ExpressionUUID->"854352a9-ead7-4350-a608-106849c90431"],
+Cell[10843, 304, 259, 5, 30, "Input",ExpressionUUID->"539dfd2a-f55e-4ce6-9748-7738055f0890"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11139, 314, 209, 4, 45, "Subsubsection",ExpressionUUID->"24bc63de-d0bc-4185-b10e-32d53c8d9203"],
+Cell[11351, 320, 251, 6, 35, "Text",ExpressionUUID->"b7cc457a-d15a-48cf-9f4a-d1dee084c81b"],
+Cell[11605, 328, 1613, 38, 94, "Input",ExpressionUUID->"0a521c22-1a72-45e5-927c-1f6f54f87e6c"],
+Cell[13221, 368, 178, 3, 35, "Text",ExpressionUUID->"94bd45ff-20ce-4d38-abfe-6a34dd775301"],
+Cell[13402, 373, 307, 6, 30, "Input",ExpressionUUID->"3db0735f-08d6-45aa-b3de-8ee4ae7b450b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13746, 384, 163, 3, 45, "Subsubsection",ExpressionUUID->"64aff814-0deb-4e32-bd7a-485283eaff7c"],
+Cell[13912, 389, 372, 8, 30, "Input",ExpressionUUID->"220f4cb3-98b7-4657-b38d-c534e425da40"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14321, 402, 169, 3, 45, "Subsubsection",ExpressionUUID->"6f07e0a6-957e-4ea6-bcf4-6fcd174a42f6"],
+Cell[14493, 407, 317, 6, 30, "Input",ExpressionUUID->"fd2cd578-0fc9-46fa-b540-12c341944905"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14847, 418, 160, 3, 45, "Subsubsection",ExpressionUUID->"3167dea8-27a3-4735-a717-781455e0bbe8"],
+Cell[15010, 423, 313, 6, 30, "Input",ExpressionUUID->"57045884-ecbb-4c20-aaca-7dedd4d9902e"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15360, 434, 212, 4, 45, "Subsubsection",ExpressionUUID->"59569ddb-516e-4724-8cf7-93e1cb8ae759"],
+Cell[15575, 440, 354, 9, 30, "Input",ExpressionUUID->"18b477bc-3a45-4c56-afc0-7ade3ba926dd"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15966, 454, 192, 3, 45, "Subsubsection",ExpressionUUID->"d18f9149-d2c6-4b68-97a6-b5cd60b32338"],
+Cell[16161, 459, 300, 7, 30, "Input",ExpressionUUID->"ad9430fc-88bf-4475-8072-fda9d4c68f2b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16498, 471, 209, 4, 45, "Subsubsection",ExpressionUUID->"b56b9742-87b4-479a-9bbf-f5c72e66b90f"],
+Cell[16710, 477, 320, 7, 30, "Input",ExpressionUUID->"ce2fe40d-ce9c-4124-9365-8957d8e91c4a"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17067, 489, 214, 4, 45, "Subsubsection",ExpressionUUID->"d4afd7ae-293f-4520-8a07-7568f89dd64b"],
+Cell[17284, 495, 384, 8, 30, "Input",ExpressionUUID->"0d298891-4255-4bb6-824e-b4f82f9a3821"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17705, 508, 218, 4, 45, "Subsubsection",ExpressionUUID->"65005aba-93e6-47d7-989e-2ed525e24533"],
+Cell[17926, 514, 216, 5, 35, "Text",ExpressionUUID->"e81d6350-d396-4db8-8947-a871f9f868e2"],
+Cell[18145, 521, 453, 11, 30, "Input",ExpressionUUID->"cf66e5fb-6090-45bc-a756-949418f89371"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18635, 537, 342, 5, 45, "Subsubsection",ExpressionUUID->"2e2db017-64dc-4330-a99a-655246701df7"],
+Cell[18980, 544, 379, 8, 35, "Text",ExpressionUUID->"fd14188c-0471-468f-9746-839a1bc8a977"],
+Cell[19362, 554, 1124, 26, 94, "Input",ExpressionUUID->"12f3d845-ce35-4c1d-a9b3-18d397ed548b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20523, 585, 337, 5, 45, "Subsubsection",ExpressionUUID->"79d4b85f-3b52-4296-97fb-a083cdb0f695"],
+Cell[20863, 592, 226, 5, 35, "Text",ExpressionUUID->"83dcd32c-c490-401f-af6a-bfcb1a1bbfaf"],
+Cell[21092, 599, 349, 8, 30, "Input",ExpressionUUID->"441ba2cc-9718-4ad9-b18e-03f1a6b20a1e"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[21478, 612, 407, 6, 45, "Subsubsection",ExpressionUUID->"a2b4095a-8ab9-4b2f-8921-cd8496eb55ec"],
+Cell[21888, 620, 278, 6, 35, "Text",ExpressionUUID->"27c8d5eb-b0b8-4883-ae9e-13532a206df6"],
+Cell[22169, 628, 885, 22, 52, "Input",ExpressionUUID->"f7429f6d-38eb-49e1-801e-086f16f2f14e"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23091, 655, 437, 7, 45, "Subsubsection",ExpressionUUID->"31c293b5-a384-41fc-8673-bbab3dee4d5b"],
+Cell[23531, 664, 346, 8, 30, "Input",ExpressionUUID->"c0ea2328-340b-40c3-8570-3011e4ebbbef"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23914, 677, 457, 7, 45, "Subsubsection",ExpressionUUID->"067206c1-ac01-4268-81cf-d627daf2097a"],
+Cell[24374, 686, 255, 6, 35, "Text",ExpressionUUID->"41085e5f-33d4-46fc-a4a6-b8cd06b6a987"],
+Cell[24632, 694, 743, 21, 52, "Input",ExpressionUUID->"1ccd9977-1ad4-4a41-afd2-d46db9c644a9"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[25412, 720, 554, 8, 45, "Subsubsection",ExpressionUUID->"8afa775a-8af7-4aa6-9499-8d160645753a"],
+Cell[25969, 730, 229, 6, 35, "Text",ExpressionUUID->"43d982de-ee4a-44c2-8bcf-90f9103a94cc"],
+Cell[26201, 738, 698, 17, 52, "Input",ExpressionUUID->"40efd0b5-b47b-4672-90ee-848043565c19"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[26936, 760, 554, 8, 45, "Subsubsection",ExpressionUUID->"439efcfb-d6c2-4e4f-96cd-64ccd9384a3f"],
+Cell[27493, 770, 319, 7, 35, "Text",ExpressionUUID->"fcd2b1b3-7188-416f-bb5a-aaa9506cfff6"],
+Cell[27815, 779, 827, 22, 52, "Input",ExpressionUUID->"81e44540-d3fc-4ac4-9f0e-128747d06ad8"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28679, 806, 158, 3, 45, "Subsubsection",ExpressionUUID->"f8d3d796-ae11-4695-8ff7-56c82f0501d7"],
+Cell[28840, 811, 377, 8, 30, "Input",ExpressionUUID->"20cc195b-9a71-4a09-914a-53a44e180ad8"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[29254, 824, 266, 4, 45, "Subsubsection",ExpressionUUID->"29f2a039-0da6-487d-bb6a-aa6cb128b188"],
+Cell[29523, 830, 365, 7, 58, "Text",ExpressionUUID->"23a488b0-4d6a-4f09-8fad-813be04666bb"],
+Cell[29891, 839, 603, 15, 30, "Input",ExpressionUUID->"0926270b-bd1b-4b0d-9490-4a2353fbe407"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[30543, 860, 171, 3, 67, "Section",ExpressionUUID->"3f2e5651-c952-4fce-b7ee-a8e90faa97bb"],
+Cell[CellGroupData[{
+Cell[30739, 867, 182, 3, 54, "Subsection",ExpressionUUID->"70d9678c-9d36-427d-8602-6c0edec28173"],
+Cell[30924, 872, 194, 3, 35, "Text",ExpressionUUID->"46be26d1-d611-4488-9ff7-41226ec5e76c"],
+Cell[31121, 877, 438, 10, 30, "Input",ExpressionUUID->"d18275ae-f5cc-40e0-a0f9-a620c980e278"],
+Cell[31562, 889, 531, 9, 58, "Text",ExpressionUUID->"a267ae39-fff5-4b5d-bda0-bcb156afff28"],
+Cell[32096, 900, 1151, 30, 94, "Input",ExpressionUUID->"c549d468-7bea-4e10-bafd-a4e740304561"],
+Cell[33250, 932, 249, 6, 35, "Text",ExpressionUUID->"61aeaf4f-d7ae-4e62-b9c5-9adf95d1b1b6"],
+Cell[33502, 940, 598, 15, 30, "Input",ExpressionUUID->"b729915f-97dd-401a-8197-6a47ff42aa93"],
+Cell[34103, 957, 420, 8, 35, "Text",ExpressionUUID->"9790fce2-2569-422a-8607-2321090ba34b"],
+Cell[34526, 967, 436, 11, 30, "Input",ExpressionUUID->"31bb8781-50ed-4c66-9781-618177175949"],
+Cell[34965, 980, 630, 11, 58, "Text",ExpressionUUID->"bb20a864-2d2d-4e5d-9c1e-070ffdc0e8f8"],
+Cell[35598, 993, 674, 18, 30, "Input",ExpressionUUID->"6973152f-051c-4058-8254-8c472ccc66d2"],
+Cell[36275, 1013, 406, 8, 58, "Text",ExpressionUUID->"0928f4ea-9ef8-4a20-9f89-ff230a71c64e"],
+Cell[36684, 1023, 545, 14, 30, "Input",ExpressionUUID->"91cd5d4f-13df-4166-b3d8-37f2e5b4e4cc"],
+Cell[37232, 1039, 323, 8, 30, "Input",ExpressionUUID->"7d5c8d1c-c3cd-4ae3-be5d-3b6ce4065ab5"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[37592, 1052, 215, 4, 54, "Subsection",ExpressionUUID->"33c6de95-c370-4a17-b563-726e9fc9d6af"],
+Cell[37810, 1058, 247, 6, 35, "Text",ExpressionUUID->"8e2e6237-a5b6-422a-8795-8234b1480fa2"],
+Cell[38060, 1066, 600, 16, 30, "Input",ExpressionUUID->"e4668fb8-4845-4b2c-9e98-a22b6b11922c"],
+Cell[CellGroupData[{
+Cell[38685, 1086, 160, 3, 45, "Subsubsection",ExpressionUUID->"ebbec229-3eeb-4274-bf3e-8133a4952ecd"],
+Cell[38848, 1091, 471, 9, 58, "Text",ExpressionUUID->"e038a588-fbd0-425a-9ca1-b403b5a6bf2f"],
+Cell[39322, 1102, 529, 15, 30, "Input",ExpressionUUID->"cddbe3f8-b926-4712-9e60-2fecf8d31d3e"],
+Cell[39854, 1119, 541, 15, 30, "Input",ExpressionUUID->"30239fcb-7ac6-42a5-94a9-aa9bfcc7cbe9"],
+Cell[40398, 1136, 324, 8, 30, "Input",ExpressionUUID->"de119a7e-2199-4478-be16-374659b9f00b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[40759, 1149, 156, 3, 45, "Subsubsection",ExpressionUUID->"b8656171-8465-4112-a3e5-e1ec91289184"],
+Cell[40918, 1154, 444, 9, 58, "Text",ExpressionUUID->"ae70def5-4fc4-4752-82e4-df109e83627c"],
+Cell[41365, 1165, 1016, 28, 52, "Input",ExpressionUUID->"1b07e023-fa88-4dfa-aa60-d1592099180d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[42418, 1198, 205, 4, 45, "Subsubsection",ExpressionUUID->"98156b80-021f-4995-b990-c072c9da9238"],
+Cell[42626, 1204, 274, 6, 35, "Text",ExpressionUUID->"13351114-699c-4e8a-bc40-1f75c2c5ce99"],
+Cell[42903, 1212, 670, 19, 30, "Input",ExpressionUUID->"5c7dd907-5516-4cc7-8c0e-191cada8047e"],
+Cell[43576, 1233, 891, 25, 30, "Input",ExpressionUUID->"f36e94ac-2841-43bf-b02a-fb51b1fa2f85"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[44504, 1263, 253, 4, 45, "Subsubsection",ExpressionUUID->"0877fbce-a3bd-4a0f-88f2-48257183b23d"],
+Cell[44760, 1269, 254, 6, 35, "Text",ExpressionUUID->"197a6927-6135-4690-bc61-ed72882f7f7d"],
+Cell[45017, 1277, 588, 17, 30, "Input",ExpressionUUID->"4183daf7-0c0d-4c0a-b3dd-8988e37cc6a3"],
+Cell[45608, 1296, 814, 23, 30, "Input",ExpressionUUID->"2959bb6e-8d79-4050-8c8e-c83f8c1c8914"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[46459, 1324, 209, 4, 45, "Subsubsection",ExpressionUUID->"921d71c6-9343-4ce8-9670-ec34fe4cfdf5"],
+Cell[46671, 1330, 214, 4, 35, "Text",ExpressionUUID->"68fa9139-de32-451d-8b3b-37894132acec"],
+Cell[46888, 1336, 413, 11, 30, "Input",ExpressionUUID->"ff6fca2d-e537-4202-99b5-15cc2e0eb222"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[47338, 1352, 302, 5, 45, "Subsubsection",ExpressionUUID->"1667a6ed-14dc-4ba7-ac1b-db9daedbfb7b"],
+Cell[47643, 1359, 258, 6, 35, "Text",ExpressionUUID->"3cb8c7ed-ef49-4532-a8f0-16973a463c80"],
+Cell[47904, 1367, 915, 25, 30, "Input",ExpressionUUID->"047ed07f-b93f-4846-9765-729fe09da4c3"],
+Cell[48822, 1394, 1079, 30, 52, "Input",ExpressionUUID->"7980c567-f472-4c2b-889c-4f700d923ab7"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[49938, 1429, 302, 5, 45, "Subsubsection",ExpressionUUID->"a3584626-ff94-4710-95f4-a8e5fc349014"],
+Cell[50243, 1436, 281, 6, 35, "Text",ExpressionUUID->"8b9d99e1-b890-4119-a862-5b7c6c5960e0"],
+Cell[50527, 1444, 898, 25, 30, "Input",ExpressionUUID->"015da083-6640-4578-a001-4baa4f5c2994"],
+Cell[51428, 1471, 1080, 30, 52, "Input",ExpressionUUID->"637167de-ea9b-4fa0-a9d5-b3292a043b77"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[52545, 1506, 213, 4, 45, "Subsubsection",ExpressionUUID->"4be521a9-a8d3-4aae-af24-416d0aad80c5"],
+Cell[52761, 1512, 410, 11, 30, "Input",ExpressionUUID->"836ec553-0667-4896-b050-1c0f8285e7c1"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[53208, 1528, 302, 5, 45, "Subsubsection",ExpressionUUID->"59823d57-d3f7-4bb0-aca7-a431f59714cf"],
+Cell[53513, 1535, 939, 25, 30, "Input",ExpressionUUID->"b859da42-f1a7-4522-bf1f-6b2ec11fa52d"],
+Cell[54455, 1562, 1130, 31, 52, "Input",ExpressionUUID->"aa1e69f0-a1c7-4c1f-9345-c5204a11a2dc"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[55622, 1598, 302, 5, 45, "Subsubsection",ExpressionUUID->"edf3d4f2-79f4-49fb-8a26-1c93d20a17e5"],
+Cell[55927, 1605, 948, 25, 30, "Input",ExpressionUUID->"5b5850b3-c4d1-4174-9f66-05c368e6f68a"],
+Cell[56878, 1632, 1131, 31, 52, "Input",ExpressionUUID->"17f9ab0b-b899-4961-80e0-e7c176ae4300"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[58046, 1668, 209, 4, 45, "Subsubsection",ExpressionUUID->"90b8d13a-d7a9-48a8-9cf1-f32ae83958c4"],
+Cell[58258, 1674, 411, 11, 30, "Input",ExpressionUUID->"d55a37c0-0fec-4278-9629-2af46cb13997"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[58706, 1690, 302, 5, 45, "Subsubsection",ExpressionUUID->"9b9a1fc1-2978-47f1-84b0-91101de2ed3f"],
+Cell[59011, 1697, 941, 25, 30, "Input",ExpressionUUID->"b6dfe005-0fc4-4188-9789-d823bee812bf"],
+Cell[59955, 1724, 1128, 31, 52, "Input",ExpressionUUID->"86899ce7-03d5-4605-92ed-c85a3d2b3449"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[61120, 1760, 301, 5, 45, "Subsubsection",ExpressionUUID->"d08ff116-dba7-420a-9024-00b8b5dbc0af"],
+Cell[61424, 1767, 943, 25, 30, "Input",ExpressionUUID->"f8c32070-14a8-4709-b691-be04f6ea13cb"],
+Cell[62370, 1794, 1131, 31, 52, "Input",ExpressionUUID->"fe43ed1e-781c-46bf-aee2-bf5645ac71b6"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[63538, 1830, 209, 4, 45, "Subsubsection",ExpressionUUID->"93d15110-3a21-47b5-8ed9-df2f48aee109"],
+Cell[63750, 1836, 413, 11, 30, "Input",ExpressionUUID->"9a658f69-142f-44be-845c-32b53a6b0cd8"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[64200, 1852, 305, 5, 45, "Subsubsection",ExpressionUUID->"0c98e074-7519-43b5-bc4f-2a1c6da899f5"],
+Cell[64508, 1859, 991, 26, 30, "Input",ExpressionUUID->"040b2952-3988-4368-94b8-3b8dd1f0f1be"],
+Cell[65502, 1887, 1128, 31, 52, "Input",ExpressionUUID->"78155d90-1cf2-4474-9a5f-7caddeba82ef"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[66667, 1923, 304, 5, 45, "Subsubsection",ExpressionUUID->"861b5b0c-e6da-4ff6-b274-89178d332b28"],
+Cell[66974, 1930, 943, 25, 30, "Input",ExpressionUUID->"051d99bd-150b-450d-b2e9-3a09938d8746"],
+Cell[67920, 1957, 1129, 31, 52, "Input",ExpressionUUID->"72c33517-4b45-4b6c-a291-a5824698869c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[69086, 1993, 211, 4, 45, "Subsubsection",ExpressionUUID->"b142cfc4-8060-414a-a77d-1cf4e2c787a9"],
+Cell[69300, 1999, 413, 11, 30, "Input",ExpressionUUID->"354ddd6f-94f6-4ff8-8633-975b0e5e567c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[69750, 2015, 302, 5, 45, "Subsubsection",ExpressionUUID->"3cd91f82-b678-4c7a-9f5a-8d32674ea32b"],
+Cell[70055, 2022, 965, 26, 30, "Input",ExpressionUUID->"e49b2399-706b-477e-96bd-ac3fbf5264aa"],
+Cell[71023, 2050, 1127, 31, 52, "Input",ExpressionUUID->"b3685b42-096a-4717-91a7-bf13193a6537"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[72187, 2086, 305, 5, 45, "Subsubsection",ExpressionUUID->"5f5b18d0-82de-4adc-91ac-ed0bb7787ac4"],
+Cell[72495, 2093, 943, 25, 30, "Input",ExpressionUUID->"4bd3f741-2147-4ff7-a0fa-206f9ba84e4c"],
+Cell[73441, 2120, 1131, 31, 52, "Input",ExpressionUUID->"7c51591f-25ae-447a-9d3d-5cc8cb82bab8"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
